@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter
 
 def calc_network(rate_card, file):
+    """Takes in a rate card and GraphML file and returns the total cost of network"""
     tree = ET.parse(file)
     root = tree.getroot()
 
@@ -10,8 +11,8 @@ def calc_network(rate_card, file):
         type = element.find('data').text
         id = element.attrib['id']
         items[id] = type
-
     # print(items)
+
     trench_data = []
     trench_costs = []
     for element in root.iter('edge'):
@@ -33,7 +34,7 @@ def calc_network(rate_card, file):
 
         #print(source_id, source_name, target_id, target_name, material, length, trench_cost)
 
-    print(trench_data)
+    # print(trench_data)
 
     # trench_data = calc_distance_to_cabinet(trench_data)
 
@@ -46,37 +47,40 @@ def calc_network(rate_card, file):
         pot_cost = 0
 
     item_costs = [cabinet_cost, chamber_cost, pot_cost]
-    print(trench_costs)
-    print(item_costs)
+    # print(trench_costs)
+    # print(item_costs)
 
     total_cost = sum(item_costs) + sum(trench_costs)
 
     return total_cost
 
 # def calc_distance_to_cabinet(trench_data):
-
+#     """Calculate the distance from the Pot to the cabinet"""
 #     for data in trench_data:
 #         if data['source_name'] == 'Chamber' and data['target_name'] == 'Chamber':
 
-file = 'problem.graphml'
-rate_card_a = {
-    'Cabinet': 1000,
-    'verge': 50,
-    'road': 100,
-    'Chamber': 200,
-    'Pot': 100,
-    'fixed_pot': True,
-}
 
-rate_card_b = {
-    'Cabinet': 1200,
-    'verge': 40,
-    'road': 80,
-    'Chamber': 200,
-    'Pot': 20,
-    'fixed_pot': False,
-}
+if __name__ == "__main__":
 
-total_network_cost = calc_network(rate_card_a, file)
+    file = 'problem.graphml'
+    rate_card_a = {
+        'Cabinet': 1000,
+        'verge': 50,
+        'road': 100,
+        'Chamber': 200,
+        'Pot': 100,
+        'fixed_pot': True,
+    }
 
-print(f'Total cost:', total_network_cost)
+    rate_card_b = {
+        'Cabinet': 1200,
+        'verge': 40,
+        'road': 80,
+        'Chamber': 200,
+        'Pot': 20,
+        'fixed_pot': False,
+    }
+
+    total_network_cost = calc_network(rate_card_a, file)
+
+    print(f'Total Network Cost:', total_network_cost)
