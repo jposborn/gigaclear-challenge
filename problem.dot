@@ -1,0 +1,19 @@
+strict graph "" {
+A [type=Cabinet];
+B [type=Pot];
+C [type=Pot];
+D [type=Pot];
+E [type=Pot];
+F [type=Chamber];
+G [type=Chamber];
+H [type=Chamber];
+I [type=Chamber];
+A -- F  [length=50, material=verge];
+B -- F  [length=20, material=verge];
+C -- G  [length=50, material=road];
+D -- H  [length=100, material=road];
+E -- H  [length=50, material=verge];
+F -- G  [length=100, material=verge];
+G -- I  [length=40, material=road];
+H -- G  [length=100, material=road];
+}
