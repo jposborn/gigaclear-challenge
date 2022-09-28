@@ -1,2 +1,2 @@
-# gigaclear-challenge
-Gigaclear Coding Challenge
+# Gigaclear Coding Challenge
+
