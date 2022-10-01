@@ -6,9 +6,9 @@ from networkx.algorithms.shortest_paths.generic import shortest_path
 from networkx.classes.function import path_weight
 
 
-def calc_distance_to_cabinet(source, target):
+def calc_distance_to_cabinet(source, target, G):
     """Calculate the distance between two points in network"""
-    G = nx.read_graphml(file)
+
 
     path = shortest_path(G, source=source, target=target, weight="length")
     path_length = path_weight(G, path, weight="length")
@@ -89,6 +89,10 @@ def calc_distance_to_cabinet(source, target):
 #     return total_cost
 
 def calc_network(rate_card_a, file):
+    G = nx.read_graphml(file)
+    for node1, node2, data in G.edges(data=True):
+        print(data['length'])
+
     pass
 
 
