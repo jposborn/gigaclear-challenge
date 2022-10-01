@@ -1,104 +1,59 @@
-import xml.etree.ElementTree as ET
-from collections import Counter
-
 import networkx as nx
 from networkx.algorithms.shortest_paths.generic import shortest_path
 from networkx.classes.function import path_weight
 
+from collections import Counter
 
-def calc_distance_to_cabinet(source, target, G):
+
+def calc_distance_to_cabinet(source, target, graph):
     """Calculate the distance between two points in network"""
-
-
-    path = shortest_path(G, source=source, target=target, weight="length")
-    path_length = path_weight(G, path, weight="length")
+    path = shortest_path(graph, source=source, target=target, weight="length")
+    path_length = path_weight(graph, path, weight="length")
 
     return path_length
 
-# def calc_network(rate_card, file):
-#     """Takes in a rate card and GraphML XML file and returns the total cost of network"""
-#     tree = ET.parse(file)
-#     root = tree.getroot()
 
-#     nodes = {}
-#     for element in root.iter('node'):
-#         type = element.find('data').text
-#         id = element.attrib['id']
-#         nodes[id] = type
-#     # print(items)
-
-#     trench_data = []
-#     trench_costs = []
-#     for element in root.iter('edge'):
-#         source_id = element.attrib['source']
-#         target_id = element.attrib['target']
-#         source_name = nodes[source_id]
-#         target_name = nodes[target_id]
-#         for data in element.iter('data'):
-#             if data.attrib['key'] == 'material':
-#                 material = data.text
-#             elif data.attrib['key'] == 'length':
-#                 length = data.text
-
-#         trench_cost = rate_card[material] * int(length)
-#         trench_costs.append(trench_cost)
-
-#         branch = {
-#                 'source_id': source_id,
-#                 'source_name': source_name,
-#                 'target_id': target_id,
-#                 'target_name': target_name,
-#                 'material': material,
-#                 'length': length,
-#                 'cost': trench_cost
-#                 }
-
-#         trench_data.append(branch)
-
-#     # Append distance from pots to cabinet
-#     for trench in trench_data:
-#         if trench['source_name'] == 'Cabinet':
-#             cab_id = trench['source_id']
-
-#     for trench in trench_data:
-#         if trench['source_name'] == 'Pot':
-#             cab_dist = calc_distance_to_cabinet(trench['source_id'],  cab_id)
-#             trench['dist_to_cab'] = cab_dist
-
-#     # print(trench_data)
-
-#     # Fixed Item Costs
-#     item_count = Counter(nodes.values())
-#     total_cabinet_cost = item_count['Cabinet'] * rate_card['Cabinet']
-#     total_chamber_cost = item_count['Chamber'] * rate_card['Chamber']
-#     if rate_card['fixed_pot'] == True:
-#         total_pot_cost = item_count['Pot'] * rate_card['Pot']
-#     else:
-#         pot_costs = []
-#         for trench in trench_data:
-#             if trench['source_name'] == 'Pot':
-#                 pot_cost = trench['dist_to_cab'] * rate_card['Pot']
-#                 pot_costs.append(pot_cost)
-#         total_pot_cost = sum(pot_costs)
-
-#     item_costs = [total_cabinet_cost, total_chamber_cost, total_pot_cost]
-#     # print(item_costs)
-#     # print(trench_costs)
-#     total_cost = sum(item_costs) + sum(trench_costs)
-
-#     return total_cost
-
-def calc_network(rate_card_a, file):
+def calc_network(rate_card, file):
+    """Calcluate Network Cost by rate card"""
     G = nx.read_graphml(file)
+
+    trench_costs = []
     for node1, node2, data in G.edges(data=True):
-        print(data['material'], data['length'])
+        trench_cost = rate_card[data['material']] * data['length']
+        trench_costs.append(trench_cost)
 
-    pass
+    items = []
+    pots = []
+    for node in G.nodes(data=True):
+        items.append(node[1]['type'])
+        if node[1]['type'] == 'Pot':
+            pots.append(node[0])
+        if node[1]['type'] == 'Cabinet':
+            cabinet_id = node[0]
 
+    item_count = Counter(items)
+
+    total_cabinet_cost = item_count['Cabinet'] * rate_card['Cabinet']
+    total_chamber_cost = item_count['Chamber'] * rate_card['Chamber']
+
+    if rate_card['fixed_pot']:
+        total_pot_cost = item_count['Pot'] * rate_card['Pot']
+    else:
+        pot_costs = []
+        for pot in pots:
+            dist_to_cab = calc_distance_to_cabinet(cabinet_id, pot, G)
+            pot_cost = dist_to_cab * rate_card['Pot']
+            pot_costs.append(pot_cost)
+            total_pot_cost = sum(pot_costs)
+
+    item_costs = [total_cabinet_cost, total_chamber_cost, total_pot_cost]
+    total_cost = sum(item_costs) + sum(trench_costs)
+
+    return total_cost
 
 if __name__ == "__main__":
 
-    file = 'problem.graphml'
+    graph_file = 'files/problem.graphml'
     rate_card_a = {
         'Cabinet': 1000,
         'verge': 50,
@@ -117,8 +72,8 @@ if __name__ == "__main__":
         'fixed_pot': False,
     }
 
-    total_network_cost_a = calc_network(rate_card_a, file)
-    total_network_cost_b = calc_network(rate_card_b, file)
+    total_network_cost_a = calc_network(rate_card_a, graph_file)
+    total_network_cost_b = calc_network(rate_card_b, graph_file)
 
     print(f'Total Network Cost (Rate Card A):', total_network_cost_a)
     print('')
