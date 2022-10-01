@@ -14,14 +14,17 @@ def calc_distance_to_cabinet(source, target, graph):
 
 
 def calc_network(rate_card, file):
-    """Calcluate Network Cost by rate card"""
+    """Calculate Network Cost by rate card"""
     G = nx.read_graphml(file)
 
+    #  Use the Edge data to calculate the trench costs
     trench_costs = []
     for node1, node2, data in G.edges(data=True):
         trench_cost = rate_card[data['material']] * data['length']
         trench_costs.append(trench_cost)
 
+    #  Use the Node data to count the number
+    #  of items and identify the Pots and Cabinet
     items = []
     pots = []
     for node in G.nodes(data=True):
@@ -33,9 +36,12 @@ def calc_network(rate_card, file):
 
     item_count = Counter(items)
 
+    #  Calculate the total chamber and cabinet cost
     total_cabinet_cost = item_count['Cabinet'] * rate_card['Cabinet']
     total_chamber_cost = item_count['Chamber'] * rate_card['Chamber']
 
+    #  Check if the pot cost is fixed or based
+    #  on distance to cabinet then calculate costs
     if rate_card['fixed_pot']:
         total_pot_cost = item_count['Pot'] * rate_card['Pot']
     else:
@@ -46,10 +52,12 @@ def calc_network(rate_card, file):
             pot_costs.append(pot_cost)
             total_pot_cost = sum(pot_costs)
 
+    #  Calculate total items costs and sum with trench costs to give total cost
     item_costs = [total_cabinet_cost, total_chamber_cost, total_pot_cost]
     total_cost = sum(item_costs) + sum(trench_costs)
 
     return total_cost
+
 
 if __name__ == "__main__":
 
@@ -75,6 +83,8 @@ if __name__ == "__main__":
     total_network_cost_a = calc_network(rate_card_a, graph_file)
     total_network_cost_b = calc_network(rate_card_b, graph_file)
 
-    print(f'Total Network Cost (Rate Card A):', total_network_cost_a)
+    print('Total Network Cost (Rate Card A): £{:,.2f}'
+            .format(total_network_cost_a))
     print('')
-    print(f'Total Network Cost (Rate Card B):', total_network_cost_b)
+    print('Total Network Cost (Rate Card B): £{:,.2f}'
+            .format(total_network_cost_b))
