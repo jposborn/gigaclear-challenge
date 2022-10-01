@@ -83,8 +83,12 @@ if __name__ == "__main__":
     total_network_cost_a = calc_network(rate_card_a, graph_file)
     total_network_cost_b = calc_network(rate_card_b, graph_file)
 
-    print('Total Network Cost (Rate Card A): £{:,.2f}'
-            .format(total_network_cost_a))
+    print(
+        'Total Network Cost (Rate Card A): £{:,.2f}'
+        .format(total_network_cost_a)
+        )
     print('')
-    print('Total Network Cost (Rate Card B): £{:,.2f}'
-            .format(total_network_cost_b))
+    print(
+        'Total Network Cost (Rate Card B): £{:,.2f}'
+        .format(total_network_cost_b)
+        )
