@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
   <key attr.name="length" attr.type="long" for="edge" id="length" />
   <key attr.name="material" attr.type="string" for="edge" id="material" />
   <key attr.name="type" attr.type="string" for="node" id="type" />
