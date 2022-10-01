@@ -91,7 +91,7 @@ def calc_distance_to_cabinet(source, target, G):
 def calc_network(rate_card_a, file):
     G = nx.read_graphml(file)
     for node1, node2, data in G.edges(data=True):
-        print(data['length'])
+        print(data['material'], data['length'])
 
     pass
 
