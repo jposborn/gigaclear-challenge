@@ -5,10 +5,10 @@ from networkx.classes.function import path_weight
 from collections import Counter
 
 
-def calc_distance_to_cabinet(source, target, graph):
+def calc_distance_to_cabinet(source, target, G):
     """Calculate the distance between two points in network"""
-    path = shortest_path(graph, source=source, target=target, weight="length")
-    path_length = path_weight(graph, path, weight="length")
+    path = shortest_path(G, source=source, target=target, weight="length")
+    path_length = path_weight(G, path, weight="length")
 
     return path_length
 
@@ -20,7 +20,7 @@ def calc_network(rate_card, file):
     #  Use the Edge data to calculate the trench costs
     trench_costs = []
     for node1, node2, data in G.edges(data=True):
-        trench_cost = rate_card[data['material']] * data['length']
+        trench_cost = rate_card[data['material'].lower()] * data['length']
         trench_costs.append(trench_cost)
 
     #  Use the Node data to count the number
